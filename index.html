@@ -234,7 +234,7 @@
   <div class="hero">
     <h1>中秋快乐</h1>
     <p>愿 人 长 久 · 千 里 共 婵 娟</p>
-    <button onclick="goTo(2)">进入 🌕</button>
+    <button onclick="enterSite()">进入 🌕</button>
   </div>
 </section>
 
@@ -273,11 +273,22 @@ function goTo(n) {
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
   document.getElementById("screen" + n).classList.add("active");
   if (n === 3) {
-    // 进入第3屏时，来一波连发烟花
     for (let i = 0; i < 5; i++) {
       setTimeout(() => launchFirework(), i * 250);
     }
   }
+}
+
+/* ========== 进入：切屏 + 开音乐 ========== */
+function enterSite() {
+  goTo(2);
+  bgm.play().then(() => {
+    musicBtn.textContent = "🎶";
+    musicBtn.classList.remove("paused");
+  }).catch(err => {
+    // 极少数情况被浏览器拦下，用户可以点左上角 🎵 手动播
+    console.log("自动播放被拦：", err);
+  });
 }
 
 /* ========== Canvas ========== */
@@ -451,6 +462,7 @@ window.addEventListener("load", () => {
 const bgm = document.getElementById("bgm");
 const musicBtn = document.getElementById("musicBtn");
 
+/* 左上角按钮：手动播放/暂停 */
 musicBtn.addEventListener("click", () => {
   if (bgm.paused) {
     bgm.play().then(() => {
@@ -458,7 +470,6 @@ musicBtn.addEventListener("click", () => {
       musicBtn.classList.remove("paused");
     }).catch(err => {
       console.error("播放失败：", err);
-      alert("音乐播放失败，请确认 music.mp3 已放在 index.html 同一文件夹内 ✅");
     });
   } else {
     bgm.pause();
